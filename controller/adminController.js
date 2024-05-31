@@ -76,7 +76,7 @@ const unBlockUser = async(req,res)=>{
     if(user){
         user.is_Blocked = 0
         user.save()
-        res.redirect('/admin/userlist')
+        res.redirect('/admin/userlist')  
     }else{
         console.log('Error While Consoling')
     }
@@ -84,8 +84,7 @@ const unBlockUser = async(req,res)=>{
     console.log(error)
   }
 }
-
-
+  
 // Orders Section
 const loadOrders = async(req, res)=>{
     try {
