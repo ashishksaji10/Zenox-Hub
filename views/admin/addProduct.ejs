@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>ZenoX Hub</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="">
+    <meta name="" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:title" content="">
     <meta property="og:type" content="">
@@ -21,9 +21,9 @@
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="index.html" class="brand-wrap">
+            <a href="/admin/dashboard" class="brand-wrap">
                 <img src="" class="logo" alt="">
-                <h4 style="color: black;">ZenoX</h4>
+                <h4 style="color: black;">ZenoX Hub</h4>
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -61,58 +61,74 @@
                         <span class="text">Orders</span>
                     </a>
                 </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Offers</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/categoryoffer">Category offer</a>
+                        <a href="/admin/productoffer">Product offer</a>
+                    </div>
+                </li>   
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupon"> 
+                        <i class="icon material-icons md-apps"></i>
+                        <span class="text">Coupon</span>
+                    </a>
+                </li>
+               
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/salesReport"> <i class="icon material-icons md-assessment"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
+                   
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/logout"> 
+                        <i class="icon material-icons md-exit_to_app"></i>
+                        <span class="text">Logout</span>
+                    </a>
+                </li> 
             </ul>
         </nav>
     </aside>
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
-                <!-- <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
-                </form> -->
             </div>
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link btn-icon" href="#">
                             <i class="material-icons md-notifications animation-shake"></i>
                             <span class="badge rounded-pill">3</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                    </li>
+                    </li> -->
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
                             <a class="dropdown-item text-brand" href="#"><img src="adminassets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="adminassets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <!-- <a class="dropdown-item" href="#"><img src="adminassets/imgs/theme/flag-fr.png" alt="Français">Français</a>
                             <a class="dropdown-item" href="#"><img src="adminassets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="adminassets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item" href="#"><img src="adminassets/imgs/theme/flag-cn.png" alt="Français">中国人</a> -->
                         </div>
                     </li>
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="adminassets/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <!-- <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
-                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider"></div> -->
                             <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
@@ -127,7 +143,7 @@
                             <h4>Add Product</h4>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="" enctype="multipart/form-data" onsubmit="return validateForm()">
+                            <form method="post" action="/admin/product" enctype="multipart/form-data" id="productForm" onsubmit="return validateForm()">
                                 <!-- General Information Section -->
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
@@ -136,7 +152,7 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_description" class="form-label">Description</label>
-                                    <textarea placeholder="Type product description here" class="form-control" name="description" id="product_description" rows="4"></textarea>
+                                    <textarea placeholder="Type product description here" class="form-control" name="description" id="product_description"></textarea>
                                     <p id="descriptionError" class="text-danger"></p> <!-- Placeholder for description error -->
                                 </div>
                             
@@ -170,27 +186,29 @@
                                     <% if(category.length > 0) {
                                         for(let i=0; i<category.length; i++) { %>
                                     <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input" value="<%=category[i]._id%>" name="category" id="category_<%= i %>" type="radio">
+                                        <input class="form-check-input" value="<%=category[i].id%>" name="category" id="category_<%= i %>" type="radio">
                                         <span class="form-check-label"> <%=category[i].name%> </span>
                                     </label>
                                     <%}}%>
                                     <div id="categoryError" class="text-danger"></div> 
+                                </div>
+                            
+                                <div class="mb-4">
+                                    <label for="product_images" class="form-label">Images</label>
+                                    <input type="file" class="form-control" id="product_images" name="images" multiple>
+                                    <small class="form-text text-muted">You can select multiple images.</small>
+                                    <p id="imageValidationMessage" class="text-danger"></p>
+                                    <div id="imagePreviewContainer" class="mt-3"></div>
+                                </div>
+                            
+                                <div style="margin-left: 230px;">
+                                    <div id="mainError" class="text-danger"></div> 
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
                         
-                           
-                            <div class="mb-4">
-                                <label for="product_images" class="form-label">Images</label>
-                                <input type="file" class="form-control" name="images" id="product_images" multiple>
-                                <small class="form-text text-muted">You can select multiple images.</small>
-                                <p id="imagesError" class="text-danger"></p> 
-                            </div>
-                        
-                            <div class="mb-4">
-                                <div id="mainError" class="text-danger"></div> 
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </form>  
-                    </div>
-                    <div class="mb-4">
+                    <div style="margin-left: 230px;" class="mb-4">
                                 <div id="mainError" class="text-danger"></div> 
                                 <a href="/admin/productlist"><button type="button" class="btn btn-primary">Show Products</button></a>
                             </div>
@@ -219,8 +237,9 @@
     <script src="adminassets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="adminassets/js/main.js" type="text/javascript"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const nameInput = document.getElementById('product_name');
     const descriptionInput = document.getElementById('product_description');
     const priceInput = document.getElementById('regular_price');
@@ -228,10 +247,8 @@
     const stockInput = document.getElementById('stock_count');
     const imagesInput = document.getElementById('product_images');
 
-    // Removed the brandInput since it's not part of your form
     nameInput.addEventListener('blur', () => validateInput('product_name', /^[A-Z][^\d\s]{0,98}$/, 'nameError', 'Product Name'));
     descriptionInput.addEventListener('blur', () => validateInput('product_description', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Description'));
-    // Adjusted the regex for price and discountPrice to your requirements
     priceInput.addEventListener('blur', () => validateInput('regular_price', /^\d+(\.\d{1,2})?$/, 'priceError', 'Price'));
     discountPriceInput.addEventListener('blur', () => validateInput('discount_price', /^\d+(\.\d{1,2})?$/, 'discountPriceError', 'Discount Price'));
     stockInput.addEventListener('blur', () => validateInput('stock_count', /^(100|[0-9]{1,2})$/, 'stockError', 'Stock'));
@@ -244,12 +261,13 @@
 function validateForm() {
     const isValidName = validateInput('product_name', /^[A-Z][^\d\s]{0,98}$/, 'nameError', 'Product Name');
     const isValidDescription = validateInput('product_description', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Description');
-    const isValidPrice = validateInput('regular_price', /^\d+(\.\d{1,2})?$/, 'priceError', 'Price');
+    const isValidPrice = validateInput('regular_price', /^[1-9]\d*(\.\d{1,2})?$/, 'priceError', 'Price');
     const isValidDiscountPrice = validateInput('discount_price', /^\d+(\.\d{1,2})?$/, 'discountPriceError', 'Discount Price');
-    const isValidStock = validateInput('stock_count', /^(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-9]{2}|300)$/, 'stockError', 'Stock');
-    const isValidCategory = validateCategory(); // Validate category
+    const isValidStock = validateInput('stock_count', /^(?!0+$)([1-9]\d{0,2}|300)$/, 'stockError', 'Stock');
+    const isValidCategory = validateCategory();
+    const isValidImages = validateImagesCount();
 
-    if (!isValidName || !isValidDescription || !isValidPrice || !isValidDiscountPrice || !isValidStock || !isValidCategory) {
+    if (!isValidName || !isValidDescription || !isValidPrice || !isValidDiscountPrice || !isValidStock || !isValidCategory || !isValidImages) {
         document.getElementById('mainError').innerText = 'Cannot submit form. Please fix errors.';
         return false;
     }
@@ -281,7 +299,7 @@ function validateImages(e, errorId) {
         alert(`You can only upload a maximum of ${maxFiles} files.`);
         fileInput.value = '';
         document.getElementById(errorId).textContent = `You can only upload a maximum of ${maxFiles} files.`;
-        return; 
+        return false; 
     }
 
     for (var i = 0; i < fileInput.files.length; i++) {
@@ -291,11 +309,12 @@ function validateImages(e, errorId) {
             alert('Please upload only image files (jpg, jpeg, png, gif, webp).');
             fileInput.value = '';
             document.getElementById(errorId).textContent = 'Please upload only image files (jpg, jpeg, png, gif, webp).';
-            return; 
+            return false; 
         }
     }
 
     document.getElementById(errorId).textContent = '';
+    return true;
 }
 
 function validateCategory() {
@@ -311,9 +330,127 @@ function validateCategory() {
     }
 }
 
-    </script>
+function validateImagesCount() {
+    if (filesArray.length === 0) {
+        document.getElementById('imageValidationMessage').textContent = 'Please select at least one image.';
+        return false;
+    }
+    document.getElementById('imageValidationMessage').textContent = '';
+    return true;
+}
+
+const filesArray = []; // Array to store selected files
+const maxImages = 3; // Maximum number of images allowed
+
+document.getElementById('product_images').addEventListener('change', function(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const validationMessage = document.getElementById('imageValidationMessage');
+
+    if (filesArray.length + files.length > maxImages) {
+        validationMessage.textContent = `You can only upload a maximum of ${maxImages} images.`;
+        return;
+    }
+
+    validationMessage.textContent = '';
+
+    for (let i = 0; i < files.length; i++) {
+        if (filesArray.length >= maxImages) {
+            validationMessage.textContent = `Maximum ${maxImages} images allowed. Some images were not added.`;
+            break;
+        }
+
+        const file = files[i];
+        const fileIndex = filesArray.length;
+        filesArray.push(file);
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const imgElement = document.createElement('div');
+            imgElement.className = 'image-preview';
+            imgElement.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail" style="max-width: 150px; margin-right: 10px;">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeImage(${fileIndex})">Delete</button>
+            `;
+            previewContainer.appendChild(imgElement);
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+
+function removeImage(index) {
+    filesArray.splice(index, 1);
+    updatePreviews();
     
-        
+    if (filesArray.length < maxImages) {
+        document.getElementById('imageValidationMessage').textContent = '';
+    }
+}
+
+function updatePreviews() {
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    previewContainer.innerHTML = '';
+
+    filesArray.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgElement = document.createElement('div');
+            imgElement.className = 'image-preview';
+            imgElement.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail" style="max-width: 150px; margin-right: 10px;">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeImage(${index})">Delete</button>
+            `;
+            previewContainer.appendChild(imgElement);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+document.getElementById('productForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if (!validateForm()) {
+        return;
+    }
+
+    const formData = new FormData();
+
+    filesArray.forEach((file, index) => {
+        formData.append('images', file);
+    });
+
+    const fields = ['name', 'description', 'price', 'discountPrice', 'stock'];
+    fields.forEach(field => {
+        formData.append(field, document.querySelector(`[name=${field}]`).value);
+    });
+
+    const selectedCategory = document.querySelector('input[name="category"]:checked');
+    if (selectedCategory) {
+        formData.append('category', selectedCategory.value);
+    } else {
+        document.getElementById('categoryError').innerText = 'Please select a category.';
+        return;
+    }
+
+    fetch('/admin/product', {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+</script>
+
 </body>
 
 </html>

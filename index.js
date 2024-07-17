@@ -9,11 +9,13 @@ const nocache = require('nocache')
 const passport = require('passport');
 const auth = require('./config/auth')
 
+
 const {initializingPassport} = require("./config/passportConfig")
 initializingPassport(passport)
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(nocache())
+
 
 
 app.use(session({
@@ -24,7 +26,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session())
 
+
 app.set('view engine', 'ejs')
+app.set('views','./views/user')
 
 app.use(flash())
 
@@ -37,10 +41,11 @@ app.use(logger('dev'))
 // Importing Route
 const userRoute = require('./routes/userRoute')
 const adminRoute = require('./routes/adminRoute');
+const { error } = require('./controller/userController');
 
-
-app.use('/',userRoute)
 app.use('/admin',adminRoute)
+app.use('/',userRoute)
+
 
 app.get('/auth/google',passport.authenticate('google',{ scope : ['email', 'profile']}))
 
@@ -48,6 +53,10 @@ app.get('/google/callback',passport.authenticate('google',{
     successRedirect:'/home',
     failureRedirect:'/login'
 }))
+
+app.use((req, res,next)=>{
+    res.status(404).render('error')
+})
 
 app.listen(port,()=>{
     console.log(`http://localhost:${port}/login`)

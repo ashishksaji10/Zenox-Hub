@@ -3,7 +3,6 @@ const isLoggedIn = async (req, res, next) => {
     try {
         if (req.session.adminid) {
             const userId = req.session.adminid;
-            console.log(userId);
             const user = await User.findById(userId);
                 if (user.is_admin === 1) {
                     next(); // Allow admin users to proceed

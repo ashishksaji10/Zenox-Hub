@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>HONO - Multi Purpose HTML Template</title>
+    <title>ZenoX Hub</title>
 
     <!-- ::::::::::::::Favicon icon::::::::::::::-->
     <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/png">
@@ -111,7 +111,7 @@
 
 <body>
     <!-- Start Header Area -->
-    <header class="header bg-light">
+    <header class="header">
         <div class="header__top">
             <div class="container">
                 <div class="row">
@@ -126,10 +126,6 @@
                                 <a href="/user-profile">Profile</a>
                                 <a href="/logout">LogOut</a>
                             </div>
-                            <div class="header__top__hover">
-                                <span>INR <i></i></span>
-                                
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -139,8 +135,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-3">
                     <div class="header__logo">
-                        <h3>ZenoX Hub</h3>
-                        <!-- <a href="./home"><img src="" alt=""></a> -->
+                        <h3><strong>ZenoX Hub</strong></h3>
                         
                     </div>
                 </div>
@@ -150,23 +145,13 @@
                             <li class="active"><a href="/home">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
                             <li><a href="/contact">Contacts</a></li>
-                            <li><a href="/about">About Us</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./shop-details">Shop Details</a></li>
-                                    <li><a href="./shopping-cart">Shopping Cart</a></li>
-                                    <li><a href="./checkout">Check Out</a></li>
-                                </ul>
-                            </li>
                         </ul>
                     </nav>
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                        <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
                         <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
-                        <div class="price">$0.00</div>
                     </div>
                 </div>
             </div>
@@ -590,10 +575,9 @@
                     <p class="text-danger">Payment : Pending</p>
                     <form action="" method="post">
                     <label class="radio-default d-flex">
-                        <input type="radio" name="paymentOption" style="width: 15px;" id="razorpay" value="razorpay" required>
-                            <span>Online Payment</span>
+                            <h5>Online Payment</h5>
                             </label>
-                           <input type="hidden" id="id" value="<%=order.oId%>">
+                           <input type="hidden" id="id" value="<%=order._id%>">
                             <div class="order_button pt-3">
                                 <button class="btn btn-md btn-black-default-hover" id="proceedButton" type="button">continue to payment</button>
                             </div>
@@ -617,8 +601,17 @@
                         <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
                         <div class="step active"> </div>
                         <div class="step active"> </div>
-                        <div class="step active"> <span class="icon"> <i class="fa-regular fa-rectangle-xmark"></i> </span> <span class="text">cancelled</span> </div>
+                        <div class="step active"> <span class="icon"> <i class="fa-regular fa-rectangle-xmark"></i> </span> <span class="text">Cancelled</span> 
+                        </div>
                     </div>
+                    <%}else if(order.status === 'Returned'){%>
+                        <div class="track">
+                            <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                            <div class="step active"> </div>
+                            <div class="step active"> </div>
+                            <div class="step active"> <span class="icon"> <i class="fa-regular fa-rectangle-xmark"></i> </span> <span class="text">Returned</span> 
+                            </div>
+                        </div>
                 <%}else{%>
                 <div class="track">
                     <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
@@ -647,7 +640,9 @@
                 </div>
                 <hr>
                 <ul class="row">
+                    <input type="hidden" id="amount" value="<%= order.billTotal %>">
                     <%order.items.forEach((item)=>{%>
+                        <% if(item.status != 'Cancelled'){%>
                     <li class="col-md">
                         <figure class="itemside mb-3">
                             <td class="cart__close">
@@ -657,6 +652,7 @@
                             <figcaption class="info align-self-center">
 
                                 <p class="title"><%=item.name %> <br> Qty:<%=item.quantity %></p> <span class="text-muted">Rs.<%=item.price %>.00 </span>
+                                <% } %>
                                 <%if(order.status === 'Delivered' && order.items.reviewed ){%>
                                     
                                     <!-- <div class="container" id="reviewrating" style=" background-color: white;
@@ -700,14 +696,38 @@
                     </li>
                <%})%>
                 </ul>
+
+                <hr>
+   
+                <div style="margin-top: 30px;">
+                    <h4>SubTotal Amount:<span style="font-size: 22px; font-weight: 600; margin-left: 50px;">
+                        <% 
+                            let subtotal = 0;
+                            order.items.forEach(item => {
+                                subtotal += item.price * item.quantity;
+                            });
+                        %> 
+                        Rs: <%= subtotal %>.00/-
+                    </span></h4>
+                    <h4>Discounted Amount:<span style="font-size: 22px; font-weight: 600; margin-left: 29px;">Rs: <%= subtotal - order.billTotal %>.00/-</span></h4>
+                    <h4>Total Amount: <span style="font-size: 22px; font-weight: 600; margin-left: 86px;">Rs: <%= order.billTotal %>.00/- </span> </h4>
+                </div>
                 
                 <hr>
-                <!-- <a  href="/pdf?id=<%=order._id%>" download="Invoice.pdf">Download Invoice</a> -->
+                <!-- <a  href="/pdf?id=<%=order._id%>"download="Invoice.pdf">Download Invoice </a> -->
                 <a href="/user-profile" class="btn btn-warning" data-abc="true"> <i class="fa fa-chevron-left"></i> Back to Orders</a>
-                <% if(order.status == 'Cancelled' || order.status == 'Delivered'){%>
-                    <button class="btn btn-warning" onclick="cancelOrder('<%= order.oId %>')" data-abc="true" hidden>
-                        <i class="fa fa-chevron-left"></i> Cancel Order
+                <% if(order.status == 'Cancelled'){%>
+                    <button class="btn btn-warning" onclick="returnOrder('<%= order.oId %>')" data-abc="true" hidden>
+                        <i class="fa fa-chevron-left"></i> Return Order
                     </button>
+                    <%}else if(order.status == 'Delivered'){%>
+                        <button class="btn btn-warning" onclick="returnOrder('<%= order.oId %>')" data-abc="true" >
+                            <i class="fa fa-chevron-left"></i> Return Order
+                        </button>
+                        <%}else if(order.status == 'Returned'){%>
+                            <button class="btn btn-warning" onclick="returnOrder('<%= order.oId %>')" data-abc="true"hidden>
+                                <i class="fa fa-chevron-left"></i> Return Order
+                            </button>
                     <%}else{%>
                         <button class="btn btn-warning" onclick="cancelOrder('<%= order.oId %>')" data-abc="true">
                             <i class="fa fa-chevron-left"></i> Cancel Order
@@ -715,15 +735,17 @@
                         <%}%>
                 
                 <%}%>
+                        <% if(order.status === 'Delivered' ) { %>
+                            <button class="btn btn-warning h6 mb-0 btn btn-rounded" onclick="invoice('<%= order._id %>')" data-abc="true">
+                                <i class="fa fa-chevron-left"></i> Invoice
+                            </button>
+                        <% } else { %>
+                            <button class="btn btn-warning h6 mb-0 btn btn-rounded" onclick="invoice('<%= order._id %>')" hidden data-abc="true">
+                                <i class="fa fa-chevron-left"></i> Invoice
+                            </button>
+                        <% } %>
         </article>
     </div>
-    
-
-
-
-
-
-
 
     <!-- Start Footer Section -->
     <footer class="footer">
@@ -732,8 +754,8 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer__about">
                         <div class="footer__logo">
+                            <h3 style="color: white;"><strong>ZenoX Hub</strong></h3>
                             <!-- <a href="#"><img src="img/footer-logo.png" alt=""></a> -->
-                            <h3 style="color: white;">ZenoX Hub</h3>
                         </div>
                         <p>The customer is at the heart of our unique business model, which includes design.</p>
                         <a href="#"><img src="img/payment.png" alt=""></a>
@@ -743,21 +765,17 @@
                     <div class="footer__widget">
                         <h6>Shopping</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
+                            <li><a href="/shop">Men</a></li>
+                            <li><a href="/shop">Women</a></li>
+                            <li><a href="/shop">Kids</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>About</h6>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
                         </ul>
                     </div>
                 </div>
@@ -1037,6 +1055,18 @@
     <script src="assets/js/vendor/vendor.min.js"></script>
     <script src="assets/js/plugins/plugins.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Js Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/jquery.countdown.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
     <!-- Main JS -->
@@ -1094,6 +1124,62 @@
                 }
             });
         }
+    </script>
+
+    <script>
+        function returnOrder(oId) {
+    swal.fire({
+        title: 'Reason for Return:',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        cancelButtonText: 'Cancel',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Please enter something!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const reason = result.value;
+            fetch('/order-return', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    oId,
+                    reason,
+                    type: 'Return' // Add this line to specify the request type as 'Return'
+                })
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then((data) => {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Return Requested',
+                    text: 'Your return request has been submitted successfully!'
+                }).then(() => {
+                    window.location.reload();  // Reload the page after success message is shown
+                });
+            })
+            .catch((error) => {
+                console.error('Fetch Error:', error);
+                swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an issue processing your return request. Please try again later.'
+                });
+            });
+        }
+    });
+}
     </script>
 
 <!-- Delete an Order -->
@@ -1177,6 +1263,106 @@ swal.fire({
         });
     }
 </script>
+
+
+
+<script>
+    document.getElementById('proceedButton').addEventListener("click", async (e) => {
+        e.preventDefault(); // Prevent form from submitting traditionally
+        const amount=Number(document.querySelector('#amount').value)
+        const id=document.querySelector('#id').value
+        const data={amount}
+        const repayment=await fetch('/createOrder',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(data)  
+        })
+        if(repayment.ok) {
+        const res = await repayment.json();
+        if (res.success) {
+            const options = {
+                "amount": res.amount,
+                "currency": "INR",
+                "name": "Athlete",
+                "description": "",
+                "image": "http://localhost:3000/user/img/logo2.png",
+                "order_id": res.order_id,
+                "handler":async function (response) {
+                    const data1={response,id}
+                   const serverRes= await fetch('/confirm-order', {
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data1)
+                    
+                    } ) 
+                    if (serverRes.ok) {
+            const responseData = await serverRes.json(); // Assuming the server responds with JSON
+            // Handle success. You might want to redirect the user or display a success message
+            Swal.fire({
+                title: 'Success!',
+                text: 'Payment status updated',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload(); // Redirect to confirmation page, adjust URL as needed
+                }
+            });
+             }
+                 },
+                "prefill": {
+                    "contact": res.contact,
+                    "name": res.name,
+                    "email": res.email
+                },
+                "notes": {
+                    "description": ""
+                },
+                "theme": {
+                    "color": "#2300a3"
+                }
+            };
+            const razorpayObject = new Razorpay(options);
+            //console.log(razorpayObject)
+            razorpayObject.on('payment.failed', function (response) {
+                Swal.fire({
+                    title: 'Payment Failed',
+                    text: response.error.description || 'An error occurred during payment.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                })
+            });
+           razorpayObject.open();
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: res.msg || 'An error occurred during order creation.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    } else {
+        const errorData = await response.json();
+        Swal.fire({
+            title: 'Error!',
+            text: errorData.msg || 'An error occurred during order creation.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+        
+    })
+</script>
+
+<script>     
+
+    function invoice(id){
+        window.location.href="/loadInvoice?id="+id
+    }
+    </script>     
+    
+
+
     
 </body>
 

@@ -7,7 +7,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+    <title>ZenoX Hub</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -95,10 +95,33 @@
     height: 100%; /* Set a fixed height for the tab content container */
 }
 
+    </style>
 
-
-
-
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #000000;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .pagination a.active {
+        background-color: #2d9e92;
+        color: white;
+        border: 1px solid #18976e;
+    }
+    
+    .pagination a:hover {
+        background-color: #2d9e92;
+    }
     </style>
      <link rel="stylesheet" href="assets/css/vendor/vendor.min.css">
      <link rel="stylesheet" href="assets/css/plugins/plugins.min.css">
@@ -157,10 +180,6 @@
                                 <a href="/user-profile">Profile</a>
                                 <a href="/logout">LogOut</a>
                             </div>
-                            <div class="header__top__hover">
-                                <span>INR <i></i></span>
-                                
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,8 +189,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-3">
                     <div class="header__logo">
-                        <h3>ZenoX Hub</h3>
-                        <!-- <a href="./home"><img src="" alt=""></a> -->
+                        <h3><strong>ZenoX Hub</strong></h3>
                         
                     </div>
                 </div>
@@ -181,23 +199,13 @@
                             <li class="active"><a href="/home">Home</a></li>
                             <li><a href="/shop">Shop</a></li>
                             <li><a href="/contact">Contacts</a></li>
-                            <li><a href="/about">About Us</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./shop-details">Shop Details</a></li>
-                                    <li><a href="./shopping-cart">Shopping Cart</a></li>
-                                    <li><a href="./checkout">Check Out</a></li>
-                                </ul>
-                            </li>
                         </ul>
                     </nav>
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                        <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
                         <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
-                        <div class="price">$0.00</div>
                     </div>
                 </div>
             </div>
@@ -242,6 +250,12 @@
                                     class="nav-link btn btn-block btn-md btn-black-default-hover">Downloads</a></li> -->
                             <li><a href="#address" data-bs-toggle="tab"
                                     class="nav-link btn btn-block btn-md btn-black-default-hover">Addresses</a></li>
+                                    <li><a href="#wallet" data-bs-toggle="tab"
+                                        class="nav-link btn btn-block btn-md btn-black-default-hover">Wallet</a>
+                                </li>
+                                <!-- <li><a href="/refferals" 
+                                    class="nav-link btn btn-md btn-outline-primary">Refferals</a>
+                            </li> -->
                             <!-- <li><a href="#account-details" data-bs-toggle="tab"
                                     class="nav-link btn btn-block btn-md btn-black-default-hover">Dashboard</a>
                             </li> -->
@@ -298,31 +312,106 @@
                                             <th>Date</th>
                                             <th>Product Name</th>
                                             <th>Status</th>
-                                            <th>Order ID</th>
+                                            <th>Payment Method</th>
+                                            <th>Total</th>
                                             <th>Actions</th>
                                         </tr> 
                                     </thead>
                                     <tbody>
-    <% if (orders && orders.length > 0) { %>
-        <% for (let i = 0; i < orders.length; i++) { %>
-            <tr>
-                <td><%= orders[i].orderDate %></td>
-                <td><%= orders[i].oId %></td>
-                <td><span class="success"><%= orders[i].status %></span></td>
-                <td><%= orders[i].billTotal %></td>
-                <td><a href="order-details?id=<%= orders[i]._id %>" class="view">view</a></td>
-            </tr>
-        <% } %>
-    <% } else { %>
-        <tr>
-            <td colspan="5">No orders found.</td>
-        </tr>
-    <% } %>
-</tbody>
+                                        <% if (orders && orders.length > 0) { %>
+                                            <% for (let i = 0; i < orders.length; i++) { %>
+                                                <tr>
+                                                    <td><%= new Date(orders[i].orderDate).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+
+                                                    <td><%= orders[i].oId %></td>
+                                                    <td><span class="success"><%= orders[i].status %></span></td>
+                                                    <td><%= orders[i].paymentMethod %></td>
+                                                    <td><%= orders[i].billTotal %></td>
+                                                    <td><a href="order-details?id=<%= orders[i]._id %>" class="view">view</a></td>
+                                                </tr>
+                                            <% } %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5">No orders found.</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
       
+                                </table>
+                                <div class="pagination">
+                                    <% if (currentPage > 1) { %>
+                                        <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">&laquo; Previous</a>
+                                    <% } %>
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <a href="?page=<%= i %>&limit=<%= limit %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                                    <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next &raquo;</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="wallet">
+                            <h4>Wallet</h4>
+                            <div class="table_page table-responsive">
+                                <% if(wallet !== null && wallet !== undefined) { %>
+                                    <h4>Balance: ₹ <%= wallet.amount %></h4>
+                                <% } else { %>
+                                    <h4>No wallet found.</h4>
+                                <% } %>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>Date</th> -->
+                                            <th>Date</th>
+                                            <th>Cancelled OrderId</th>
+                                            <th>Status</th>
+                                            <th>Amount</th>
+                                            
+                                        </tr> 
+                                    </thead>
+                                    <tbody>
+                                        <% if(wallet !== null && wallet !== undefined && wallet.orders && wallet.orders.length > 0) { %>
+                                            <% for (let i=0; i < wallet.orders.length; i++) { %>
+                                                <tr>
+                                                    <!-- <td>
+                                                        <%= wallet.orders[i].billTotal %>
+                                                    </td> -->
+                                                    <td>
+                                                        <%= new Date(wallet.orders[i].updatedAt).toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= wallet.orders[i].oId %>
+                                                    </td>
+                                                    <td>
+                                                        <% if(wallet.orders[i].status ==='Cancelled'|| wallet.orders[i].status ==='Returned') { %>
+                                                            <span class="success">
+                                                              Refund
+                                                                </span>
+                                                        <% } else { %>
+                                                            <span class="success">
+                                                                debit
+                                                                </span>
+                                                        <% } %>
+                                                    </td>
+                                                    <td>
+                                                        ₹ <%= wallet.orders[i].billTotal %>
+                                                    </td>
+                                                   
+                                                </tr>
+                                            <% } %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="3">No cancelled orders found.</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
+
+                        
                         <div class="tab-pane fade" id="downloads">
                             <h4>Downloads</h4>
                             <div class="table_page table-responsive">
@@ -399,7 +488,8 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer__about">
                         <div class="footer__logo">
-                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
+                            <h3 style="color: white;"><strong>ZenoX Hub</strong></h3>
+                            <!-- <a href="#"><img src="img/footer-logo.png" alt=""></a> -->
                         </div>
                         <p>The customer is at the heart of our unique business model, which includes design.</p>
                         <a href="#"><img src="img/payment.png" alt=""></a>
@@ -409,21 +499,17 @@
                     <div class="footer__widget">
                         <h6>Shopping</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
+                            <li><a href="/shop">Men</a></li>
+                            <li><a href="/shop">Women</a></li>
+                            <li><a href="/shop">Kids</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>About</h6>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
                         </ul>
                     </div>
                 </div>

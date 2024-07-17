@@ -5,6 +5,9 @@ const addressModel = require('../model/addressModel');
 const orderModel = require('../model/orderModel');
 const cartModel = require('../model/cartModel')
 const passport = require("../config/auth");
+const productOfferModel = require('../model/productOfferModel');
+const categoryOfferModel = require('../model/categoryOfferModel')
+const easyinvoice = require('easyinvoice')
 
 
 const bcrypt = require('bcrypt')
@@ -14,7 +17,8 @@ const flash = require('express-flash');
 const { session } = require('passport');
 const { name } = require('ejs');
 const Category = require('../model/categoryModel');
-const randomstring = require('randomstring')
+const randomstring = require('randomstring');
+const walletModel = require('../model/walletModel');
 
 const securePassword = async(password)=>{
     try {
@@ -52,7 +56,6 @@ const loadVerifyOtp = async(req,res)=>{
 const getOTP = async(req,res)=>{
     try{
         const email = req.body.email;
-        console.log("email in getOTP ",email)
         const verifyEmail = await userModel.findOne({email : email})
         if (verifyEmail) {
             res.render('Register',{message : 'This Email is already Registered.Try again with another Email'})
@@ -71,16 +74,12 @@ const getOTP = async(req,res)=>{
     req.session.userData.password = sPassword;
     req.session.userData.confirmpassword = sPassword;
     req.session.save();
-    console.log("hii body name :",req.body.name);
-    console.log("user data from session:",req.session.userData);
     const success = await sentOTP(email,generateOTP);
         
             res.redirect('/verifyOTP') 
-            console.log("deleting otp after 30 seconds")
             setTimeout(() => {
                 delete req.session.userData.generateOTP
                 req.session.save()
-                console.log(req.session.userData)
             }, 30000);
             
     }
@@ -111,10 +110,8 @@ const sentOTP = async (email,OTP)=>{
 
     transporter.sendMail(mailOptions,function(error, info){
         if (error) {
-            console.log(error)
             return false;
         } else {
-            console.log('Email sent' + info.response);
             return true;
         }
     })
@@ -128,7 +125,7 @@ const resendOtp = async(req,res)=>{
             upperCaseAlphabets:false,
             specialChars:false
         });
-        console.log(OTP)
+
         sentOTP(req.session.userData.email,OTP)
     
          req.session.userData.generateOTP=OTP
@@ -145,8 +142,6 @@ const resendOtp = async(req,res)=>{
 
 const insertUser = async( req, res)=>{
     try {
-        console.log(req.session.userData.generateOTP)
-        console.log(req.body.otp)
         if(req.session.userData.generateOTP === req.body.otp){
         const user = new userModel({
             name: req.session.userData.name,
@@ -156,7 +151,6 @@ const insertUser = async( req, res)=>{
         })
       
        const userDa = await user.save();
-       console.log("userdata saved",userDa);
        res.redirect('/login');
     }else{
         res.render('verifyOTP',{ message: ('Enter valid OTP') })
@@ -183,7 +177,6 @@ const verifyLogin = async(req, res)=>{
         const passwordMatch = await bcrypt.compare(password,userData.password)
         if (passwordMatch) {
             req.session.userid = userData._id
-            console.log('session-----------',req.session.userid)
             res.redirect('/home')
         } else {
             res.render('login',{message : 'Incorrect Email and Password.'})
@@ -201,32 +194,56 @@ const verifyLogin = async(req, res)=>{
 }
 
 const loadHome = async(req, res)=>{
-    console.log("passport",req.session.passport);
-    if(req.session.passport){
-        req.session.userid = req.session.passport.user;
-    }
-    console.log("userid",req.session.userid);
 
-    res.render('index')
+    try {
+        const ProductData = await productModel.find({})
+        if(req.session.passport){
+            req.session.userid = req.session.passport.user;
+        }
+        const user = req.session.userid ? req.session.userid : undefined;
+        res.render('index', { user, product: ProductData })
+    }
+    catch (error) {
+        console.log("Error while  rendering the Home-page", error.message)
+    }
+
 }
 
 
 // UserProfile Details
 
-const loadUserProfile = async(req, res)=>{
+const loadUserProfile = async (req, res) => {
     try {
-        const id = req.session.userid
-        const user = await userModel.findById(req.session.userid)
-        console.log(user.name)
-        const addressData = await addressModel.findOne({ user: req.session.userid });
-        const cartData = await cartModel.findOne({ owner: req.session.userid }).populate({ path: 'items.ProductId', model: 'Product' });
-        const orderData = await orderModel.find({user: req.session.userid}).sort({orderDate:-1})
-        console.log('OrderDataaaaa',orderData);
-        res.render('userprofile',{user:user, address:addressData, orders:orderData})
+        const id = req.session.userid;
+        const user = await userModel.findById(id);
+        const wallet = await walletModel.findOne({user:id}).populate('orders')
+        const addressData = await addressModel.findOne({ user: id });
+        const cartData = await cartModel.findOne({ owner: id }).populate({ path: 'items.ProductId', model: 'Product' });
+
+        // Pagination logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const totalOrders = await orderModel.countDocuments({ user: id });
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        const orderData = await orderModel.find({ user: id }).sort({ orderDate: -1 }).skip(skip).limit(limit);
+
+        res.render('userprofile', {
+            user: user,
+            address: addressData,
+            orders: orderData,
+            wallet: wallet,
+            currentPage: page ,
+            totalPages: totalPages,
+            limit
+        });
     } catch (error) {
         console.log(error.message);
     }
-}
+};
+
 
 const editUserDetails = async(req,res)=>{
    try {
@@ -253,73 +270,113 @@ const editUserDetails = async(req,res)=>{
 
 // Shop Details
 
-const loadShop = async(req, res)=>{
+    const loadShop = async(req, res) => {
     try {
-        let query = { is_deleted : false}
-        let category= req.query.category
+        let query = { is_deleted: false };
+        let categoryid = req.query.id;
         let searchQuery = req.query.search || '';
         const page = parseInt(req.query.page) || 1;
-        console.log(page,'page...............');
-        const limit = 9; 
+        const limit = 9;
         const skip = (page - 1) * limit;
-        console.log(skip,'skip.............................')
-        
 
-        const totalProducts = await productModel.countDocuments();
-
-        
+        if (categoryid) {
+            query.category = categoryid;
+        }
 
         if (searchQuery) {
-            query = {$or: [
-                { "Category._id": { $regex: searchQuery, $options: 'i' } },
+            query.$or = [
                 { description: { $regex: searchQuery, $options: 'i' } },
                 { name: { $regex: searchQuery, $options: 'i' } }
-            ]
+            ];
         }
-    }
 
+        const totalProducts = await productModel.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
-    
-        let sortOption = {}
-        switch(req.query.sort){
+
+        let sortOption = {};
+        switch (req.query.sort) {
             case 'priceAsc':
-                sortOption = { price : 1}
+                sortOption = { price: 1 };
                 break;
             case 'priceDsc':
-                sortOption = { price: -1 }
+                sortOption = { price: -1 };
                 break;
             case 'nameAsc':
-                sortOption = { name: 1}
+                sortOption = { name: 1 };
                 break;
             case 'nameDsc':
-                sortOption = { name: -1}
+                sortOption = { name: -1 };
                 break;
-            default : 
-                sortOption = { name: 1}
-        } 
-        const productData = await productModel.find(query).skip(skip).sort(sortOption).limit(limit).populate('category')
-        console.log(productData,'propdudatat..............................');
-        console.log(productData)
-        res.render('shop', { 
-            product: productData ,
+            default:
+                sortOption = { name: 1 };
+        }
+
+        const productData = await productModel.find(query).skip(skip).sort(sortOption).limit(limit).populate('category');
+
+        res.render('shop', {
+            product: productData,
+            category: await categoryModel.find({is_Active:true}),
             currentPage: page,
-            search:searchQuery,
+            search: searchQuery,
             totalPages,
             totalProducts,
             startIndex: skip,
-            endIndex: skip + productData.length});
+            endIndex: skip + productData.length,
+            category_id: categoryid,
+            sort: req.query.sort
+        });
     } catch (error) {
         console.log(error.message);
     }
-}
+};
+
 
 
 const loadShopDetails = async(req, res)=>{
     try {
+
         const productid = req.query.productid
         const productData = await productModel.findById(productid)
-        console.log(productData);
-        res.render('shop-details',{product:productData})
+        const proOffer = await productOfferModel.aggregate([
+            {
+              $match: {
+                'productOffer.product': productData._id,
+                'productOffer.offerStatus': true,
+                startingDate: { $lte: new Date() },
+                endingDate: { $gte: new Date() }
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalDiscount: { $sum: "$productOffer.discount" }
+              }
+            }
+          ]);
+          const proOfferDiscount = (proOffer.length > 0) ? proOffer[0].totalDiscount : 0;
+
+          const catOffer = await categoryOfferModel.aggregate([
+            {
+              $match: {
+                'categoryOffer.category': productData.category._id,
+                is_active: true,
+                "categoryOffer.offerStatus": true,
+                startingDate: { $lte: new Date() },
+                endingDate: { $gte: new Date() },
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalDiscount: { $sum: "$categoryOffer.discount" }
+              }
+            }
+          ]);
+
+          const catOfferDis = (catOffer.length > 0) ? catOffer[0].totalDiscount : 0;
+
+        res.render('shop-details',{product:productData,catOfferDis,proOfferDiscount})
+        
     } catch (error) {
         console.log(error.message);
     }
@@ -382,7 +439,6 @@ const loadForgotPassword = async(req, res)=>{
                     console.error('Error sending email:', error);
                     resolve(false);
                 } else {
-                    console.log('Email sent:', info.response);
                     resolve(true);
                 }
             });
@@ -415,13 +471,113 @@ const resetPassword = async(req, res)=>{
     }
 }
 
-
-const error = async(req,res)=>{
+const loadInvoice = async (req, res) => {
     try {
-       const error = new Error()
-       res.render('error')
+        const id = req.query.id;
+
+        const invoiceId = `ZS-2024-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        const findOrder = await orderModel.findById({ _id: id });
+
+        if (!findOrder) {
+            return res.status(404).send('Order not found');
+        }
+
+        const proId = [];
+        var user = await userModel.findOne({ _id: findOrder.user });
+
+        // Filter out cancelled items
+        const activeItems = findOrder.items.filter(item => item.status !== 'Cancelled');
+
+        for (let i = 0; i < activeItems.length; i++) {
+            proId.push(activeItems[i].productId);
+        }
+
+        const proData = [];
+
+        for (let i = 0; i < proId.length; i++) {
+            proData.push(await productModel.findById({ _id: proId[i] }));
+        }
+
+        const date = new Date().toDateString();
+        res.render("invoice", { proData, activeItems, user, invoiceId, date , findOrder});
     } catch (error) {
-       console.log(error.message)
+        console.log(error.message);
+    }
+};
+
+
+const invoice = async (req, res) => {
+    try {
+      const id = req.query.id;
+      const findOrder = await orderModel.findById({ _id: id }).populate({ path: 'items.productId', model: 'Product' });
+
+      var user = await userModel.findOne({_id:findOrder.user});
+  
+      if (!findOrder) {
+        return res.status(404).send('Order not found');
+      }
+  
+      let pdttotal = 0;
+      for (let i = 0; i < findOrder.items.length; i++) {
+        pdttotal += findOrder.items[i].subTotal;
+      }
+      const discountAmount = (pdttotal * (findOrder.discount / 100)).toFixed(2);
+      const discount = findOrder.discount;
+      const vatRate = (discount / 100); 
+      const vatAmount = pdttotal * vatRate;
+      const totalWithVAT = pdttotal - vatAmount;
+      const data = {
+        "documentTitle": "INVOICE", 
+        "currency": "INR",
+        "taxNotation": "gst", 
+        "marginTop": 25,
+        "marginRight": 25,
+        "marginLeft": 25,
+        "marginBottom": 25,
+        "logo": "adminassets/imgs/brands/7d02989082b082e58141cce8a7536ee3.jpg", 
+        "background": "adminassets/imgs/brands/7d02989082b082e58141cce8a7536ee3.jpg", 
+        "sender": {
+            "company": "Zenox Hub",
+            "address": "Brototype Hub, Maradu,Kochi,Ernakulam,Kerala",
+            "zip": "682028",
+            "city": "Kochi",
+            "country": "India" 
+        },
+        "client": {
+            "company": user.name,
+            "address": findOrder.deliveryAddress[0].houseNo,
+            "Landmark": findOrder.deliveryAddress[0].landmark,
+            "district": findOrder.deliveryAddress[0].district,
+            "zip": findOrder.deliveryAddress[0].pincode,
+            "city": findOrder.deliveryAddress[0].city,
+            "country": findOrder.deliveryAddress[0].country 
+        },
+        "products": findOrder.items.map(item => ({
+            "quantity": item.quantity.toString(),
+            "description": item.name,
+            "price": item.price / item.quantity,
+        })),
+        "discountApplied": {
+            "couponCode": findOrder.coupon        }
+      };
+  
+      const result = await easyinvoice.createInvoice(data);    
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=myInvoice.pdf');
+      res.send(Buffer.from(result.pdf, 'base64'));
+    } catch (error) {
+      console.error('Error generating invoice:', error.message);
+      res.status(500).send('Error generating invoice');
+    }
+};
+
+
+const loadContact = async(req,res)=>{
+    try {
+        res.render('contact')
+    } catch (error) {
+        console.log(error.message);
     }
 }
 
@@ -452,6 +608,8 @@ module.exports = {
     ForgotVerify,
     loadResetPassword,
     resetPassword,
-    error,
+    loadInvoice,
+    invoice,
+    loadContact,
     logout
 }

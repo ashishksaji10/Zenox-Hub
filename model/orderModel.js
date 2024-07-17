@@ -17,6 +17,9 @@ const orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    coupon: {
+        type: String
+    },
 
     items:[{
 
@@ -46,12 +49,21 @@ const orderSchema = new mongoose.Schema({
         price:{
             type:Number,
             required:true  
+        },
+        status:{
+        type:String,
+        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Returned'],
+        default:'Pending'
         }
     }],
 
     billTotal:{
         type:Number,
         required:true
+    },
+    DiscountPercentage:{
+        type: Number,
+        default: 0,
     },
     paymentMethod:{
         type:String
@@ -92,8 +104,9 @@ const orderSchema = new mongoose.Schema({
         type:String
     },
 
-    request:[{
+    requests:[{
         type:{
+            type:String,
             enum:['Cancel','Return']
         },
         status:{
@@ -114,7 +127,7 @@ const orderSchema = new mongoose.Schema({
 },
 {
     timestamps:true,
-    
+    strictPopulate: false
 })
 
 const Order = mongoose.model('Order',orderSchema)
