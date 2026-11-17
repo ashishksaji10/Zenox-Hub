@@ -257,12 +257,18 @@
                                             <input type="radio" id="" value="razorpay" name="paymentOption">
                                             <span>Razorpay</span>
                                         </label>
+                                        <% if (wallet !== null && typeof(wallet) !== 'undefined') { %>
                                         <% if (cart.billTotal <= wallet.amount) { %>
                                         <label class="checkbox-default ml-5" for="currencyCod" data-bs-toggle="collapse" data-bs-target="#methodCod">
                                             <input type="radio" id="" value="wallet" name="paymentOption">
                                             <span>Wallet</span>
                                         </label>
+                                        <% } else { %>
+                                            <p class="text-danger">Insufficient Funds in Wallet</p>
                                         <% } %>
+                                    <% } else { %>
+                                        <p>No Wallet Found</p>
+                                    <% } %>
                                         <div id="methodCod" class="collapse" data-parent="#methodCod">
                                             <div class="card-body1">
                                                 <p>Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
@@ -640,6 +646,7 @@ document.getElementById('proceedButton').addEventListener("click", async (e) => 
                /// console.log(res,"response----------")
                 if (res.success) {
                     const options = {
+                        "key": res.key_id,
                         "amount": res.amount,
                         "currency": "INR",
                         "name": "Athlete",

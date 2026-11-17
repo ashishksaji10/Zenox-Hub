@@ -1,4 +1,6 @@
 require('dotenv').config({path:'./config/.env'})
+const dns = require('dns')
+dns.setServers(['8.8.8.8', '8.8.4.4'])
 const express = require('express')
 const app = express();
 const logger = require('morgan')
@@ -12,6 +14,7 @@ const auth = require('./config/auth')
 
 const {initializingPassport} = require("./config/passportConfig")
 initializingPassport(passport)
+
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(nocache())

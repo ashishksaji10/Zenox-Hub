@@ -2,12 +2,13 @@ const crypto=require('crypto')
 const Razorpay=require('razorpay');
 const walletModel = require('../model/walletModel')
 const Cart = require('../model/cartModel')
-const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env
 
-var instance = new Razorpay({
-    key_id: RAZORPAY_ID_KEY,
-    key_secret: RAZORPAY_SECRET_KEY,
-  });
+function getRazorpayInstance() {
+    return new Razorpay({
+        key_id: process.env.RAZORPAY_ID_KEY,
+        key_secret: process.env.RAZORPAY_SECRET_KEY,
+    });
+}
  
   async function getAmount(body,id){
     if(body.id){
@@ -22,6 +23,7 @@ var instance = new Razorpay({
   const createOrder = async(req,res)=>{
     try {    
 
+        const instance = getRazorpayInstance();
         const id=req.session.userid;
         const amount= await getAmount(req.body,id)
 
@@ -39,7 +41,8 @@ var instance = new Razorpay({
                         success:true,
                         msg:'Order Created',
                         order_id:order.id,
-                        amount:amount
+                        amount:amount,
+                        key_id:process.env.RAZORPAY_ID_KEY
                     });
                 }
                 else{
@@ -56,7 +59,7 @@ var instance = new Razorpay({
 function verifySignature(orderId, paymentId, razorpaySignature) {
     const message = `${orderId}|${paymentId}`;
     const generatedSignature = crypto
-      .createHmac('sha256',RAZORPAY_SECRET_KEY)
+      .createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
       .update(message)
       .digest('hex');
   
